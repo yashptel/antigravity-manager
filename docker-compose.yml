@@ -12,16 +12,11 @@ services:
       - ./data:/root/.antigravity_tools # accounts, config, state
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    # The minimal Rust image lacks wget/curl, and a failing healthcheck
+    # causes Traefik to filter the container out -> 404.
+    # Disable it so Traefik routes traffic unconditionally.
     healthcheck:
-      test:
-        - CMD
-        - sh
-        - -c
-        - "wget -qO- http://127.0.0.1:8045/ >/dev/null 2>&1 || exit 1"
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
+      disable: true
     networks:
       - dokploy-network
     labels:
