@@ -1,0 +1,42 @@
+services:
+  antigravity-manager:
+    image: lbjlaq/antigravity-manager:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      API_KEY: ${API_KEY:?API_KEY is required}
+      WEB_PASSWORD: ${WEB_PASSWORD:-}
+      ABV_MAX_BODY_SIZE: ${ABV_MAX_BODY_SIZE:-104857600}
+    volumes:
+      - ./data:/root/.antigravity_tools # accounts, config, state
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test:
+        - CMD
+        - sh
+        - -c
+        - "wget -qO- http://127.0.0.1:8045/ >/dev/null 2>&1 || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.antigravity.rule=Host(`antigravity.debugblackbox.com`)
+      - traefik.http.routers.antigravity.entrypoints=websecure
+      - traefik.http.routers.antigravity.tls.certresolver=letsencrypt
+      - traefik.http.services.antigravity.loadbalancer.server.port=8045
+    # Loopback for local management access:
+    #   ssh -L 8045:localhost:8045 <mac-mini>
+    #   then open http://localhost:8045
+    ports:
+      - "127.0.0.1:8045:8045"
+
+networks:
+  dokploy-network:
+    external: true
