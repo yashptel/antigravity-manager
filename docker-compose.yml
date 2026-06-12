@@ -9,7 +9,9 @@ services:
       WEB_PASSWORD: ${WEB_PASSWORD:-}
       ABV_MAX_BODY_SIZE: ${ABV_MAX_BODY_SIZE:-104857600}
     volumes:
-      - ./data:/root/.antigravity_tools # accounts, config, state
+      # Named volume persists across Dokploy redeploys (Dokploy re-clones the
+      # repo dir on every deploy, so relative ./ mounts get wiped).
+      - antigravity-data:/root/.antigravity_tools # accounts, config, state
     extra_hosts:
       - "host.docker.internal:host-gateway"
     # The minimal Rust image lacks wget/curl, and a failing healthcheck
@@ -31,6 +33,9 @@ services:
     #   then open http://localhost:8045
     ports:
       - "127.0.0.1:8045:8045"
+
+volumes:
+  antigravity-data:
 
 networks:
   dokploy-network:
