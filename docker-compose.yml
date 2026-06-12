@@ -28,11 +28,13 @@ services:
       - traefik.http.routers.antigravity.entrypoints=websecure
       - traefik.http.routers.antigravity.tls.certresolver=letsencrypt
       - traefik.http.services.antigravity.loadbalancer.server.port=8045
-    # Loopback for local management access:
-    #   ssh -L 8045:localhost:8045 <mac-mini>
-    #   then open http://localhost:8045
-    ports:
-      - "127.0.0.1:8045:8045"
+    # Traefik reaches the manager over dokploy-network — no host ports needed.
+    # For direct local access (bypassing the domain), temporarily switch to
+    # `ports:` and redeploy:
+    #   ports:
+    #     - "127.0.0.1:8045:8045"
+    expose:
+      - "8045"
 
 volumes:
   antigravity-data:
