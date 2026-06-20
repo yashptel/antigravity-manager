@@ -24,7 +24,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.docker.network=dokploy-network
-      - traefik.http.routers.antigravity.rule=Host(`antigravity.debugblackbox.com`)
+      - traefik.http.routers.antigravity.rule=Host(`antigravity.squiwo.com`)
       - traefik.http.routers.antigravity.entrypoints=websecure
       - traefik.http.routers.antigravity.tls.certresolver=letsencrypt
       - traefik.http.services.antigravity.loadbalancer.server.port=8045
