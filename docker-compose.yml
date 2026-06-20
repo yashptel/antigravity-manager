@@ -1,6 +1,6 @@
 services:
   antigravity-manager:
-    image: lbjlaq/antigravity-manager:v4.2.2
+    image: lbjlaq/antigravity-manager:v4.2.5
     restart: unless-stopped
     env_file:
       - .env
